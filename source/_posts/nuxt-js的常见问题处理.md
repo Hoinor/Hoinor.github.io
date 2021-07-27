@@ -7,10 +7,11 @@ tags:
 ## 安装
 
 ### npx 
-`npx create-nuxt-app <project-name>
-`
+``` bash
+npx create-nuxt-app <project-name>
+```
 
 ### npm 
-`npm init nuxt-app <project-name>
-
-`
+``` bash
+npm init nuxt-app <project-name>
+```
