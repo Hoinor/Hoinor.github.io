@@ -15,3 +15,7 @@ npx create-nuxt-app <project-name>
 ``` bash
 npm init nuxt-app <project-name>
 ```
+
+
+## 注意事项
+    现在新创建的nuxt项目已经没有layouts文件夹，需要手动创建，然后添加default.vue文件
