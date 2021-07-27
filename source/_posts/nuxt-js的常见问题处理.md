@@ -18,5 +18,7 @@ npm init nuxt-app <project-name>
 
 
 ## 注意事项
-    现在新创建的nuxt项目已经没有layouts文件夹，需要手动创建，然后添加default.vue文件
+现在新创建的nuxt项目少了很多文件夹，需要的时候可以手动创建
+例如，已经没有layouts文件夹，需要手动修改default.vue的话，需要手动创建，然后再创建default.vue文件
     
+<!--more-->
