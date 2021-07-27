@@ -1,20 +1,65 @@
-name: deploying Hexo project to GitHub pages
+name: Deploy My_Blog  #自动化的名称
+
 on:
-  push:
-    branches:
-      - main # master 分支有 push 行为时就触发这个 action
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push: # push的时候触发
+    branches: [ main ]  # 哪些分支需要触发
+  pull_request:  
+    branches: [ dev ]
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+  # This workflow contains a single job called "build"
+  Blog_CI-CD:
+    runs-on: ubuntu-latest  # 服务器环境
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    
     steps:
+      # 检查代码
       - name: Checkout
-        uses: actions/checkout@main
-
-      - name: Build and Deploy
-        uses: theme-keep/hexo-deploy-github-pages-action@master # 使用专门部署 Hexo 到 GitHub pages 的 action
+        uses: actions/checkout@v2  #软件市场的名称
+        with: # 参数
+          submodules: true
+          persist-credentials: false
+          
+      - name: Setup Node.js
+       # 设置 node.js 环境
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+          
+      - name: Cache node modules
+      # 设置包缓存目录，避免每次下载
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          
+      # 配置Hexo环境 
+      - name: Setup Hexo
         env:
-          PERSONAL_TOKEN: ${{ secrets.DEPLOY_KEY }} # secret 名
-          PUBLISH_REPOSITORY: Hoinor/Hoinor.github.io # 公共仓库，格式：GitHub 用户名/仓库名
-          BRANCH: master # 分支，填 gh-pages 就行
-          PUBLISH_DIR: ./public # 部署 public 目录下的文件
+          ACTION_DEPLOY_KEY: ${{ secrets.DEPLOY_KEY2 }}
+        run: |
+          npm install hexo-cli -g
+          npm install
+           
+      
+      # 生成静态文件
+      - name: Build
+        run: |
+          hexo clean 
+          hexo g
+        
+      # 2、部署到 GitHub Pages
+      - name: upload GitHub repository
+        env: 
+          # Github 仓库
+          GITHUB_REPO: github.com/Hoinor/Hoinor.github.io
+         # 将编译后的博客文件推送到指定仓库
+        run: |
+          cd ./public && git init && git add .
+          git config user.name "Hoinor"       #username改为你github的用户名
+          git config user.email "hoin.seven@gmail.com"     #username改为你github的注册邮箱
+          git add .
+          git commit -m "GitHub Actions Auto Builder at $(date +'%Y-%m-%d %H:%M:%S')"
+          git push --force --quiet "https://${{ secrets.ACCESS_TOKEN }}@$GITHUB_REPO" master:master
